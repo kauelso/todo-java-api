@@ -18,7 +18,14 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "username")
     @NotNull
-    private String name;
+    private String username;
+
+    @Column(name = "password")
+    @NotNull
+    private String password;
+
+    @Transient
+    private boolean remoteDB;
 }
