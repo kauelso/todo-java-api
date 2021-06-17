@@ -8,21 +8,21 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table
+@Table(name = "user_data")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "user_username")
     @NotNull
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "user_password")
     @NotNull
     private String password;
 

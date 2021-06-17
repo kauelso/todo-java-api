@@ -1,9 +1,9 @@
 package com.example.todoapp.User.Service;
 
-import com.example.todoapp.Activity.Models.Activity;
 import com.example.todoapp.User.Models.User;
 import com.example.todoapp.User.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(@Qualifier("user") UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -27,7 +27,11 @@ public class UserService {
         return userRepository.findById(id).get();
     }
 
-    public User createUser(User user){
+    public User createUser(User user) throws IllegalAccessException {
+        Optional<User> response = userRepository.findByUsername(user.getUsername());
+        if(response.isPresent()){
+            throw new IllegalAccessException();
+        }
         return userRepository.save(user);
     }
 
@@ -37,8 +41,8 @@ public class UserService {
             throw new IllegalAccessException();
         }
         Optional<User> updatedActivity = response.map(usr -> {
-            if(user.getUsername() != null)usr.setUsername(usr.getUsername());
-            if(user.getPassword() != null)usr.setPassword(usr.getPassword());
+            if(user.getUsername() != null)usr.setUsername(user.getUsername());
+            if(user.getPassword() != null)usr.setPassword(user.getPassword());
             return usr;
         });
 

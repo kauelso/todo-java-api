@@ -26,7 +26,7 @@ public class ActivityController {
         }
         catch (IllegalAccessError e){
             System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_GATEWAY);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -37,7 +37,7 @@ public class ActivityController {
         }
         catch (IllegalAccessError e){
             System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_GATEWAY);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -48,7 +48,7 @@ public class ActivityController {
         }
         catch (IllegalAccessError e){
             System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_GATEWAY);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -59,7 +59,7 @@ public class ActivityController {
             return new ResponseEntity<Activity>(service.updateActivity(activity,id), HttpStatus.OK);
         }catch (Exception e){
             System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_GATEWAY);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -69,7 +69,7 @@ public class ActivityController {
             return new ResponseEntity<Activity>(service.removeActivity(id), HttpStatus.OK);
         }catch (Exception e){
             System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_GATEWAY);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 }
