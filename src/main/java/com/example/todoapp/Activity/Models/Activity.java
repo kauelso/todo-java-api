@@ -1,6 +1,7 @@
 package com.example.todoapp.Activity.Models;
 
-import com.example.todoapp.User.Models.User;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Locale;
 
 @Entity
 @Table
@@ -28,9 +28,11 @@ public class Activity {
     @NotNull private String description;
 
     @Column(name = "createdAt")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @NotNull private LocalDateTime createdAt;
 
     @Column(name = "updateAt")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @NotNull private LocalDateTime updatedAt;
 
     @Column(name = "user_id")
