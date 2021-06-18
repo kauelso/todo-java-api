@@ -4,6 +4,7 @@ import com.example.todoapp.User.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class UserController {
         }
     }
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user){
+    public ResponseEntity<User> addUser(@Validated @RequestBody User user){
         try {
             return new ResponseEntity<User>(service.createUser(user),HttpStatus.OK);
         }catch (Exception e){
@@ -45,7 +46,7 @@ public class UserController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@RequestBody User user,@PathVariable Long id){
+    public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Long id){
         try{
             return new ResponseEntity<User>(service.updateUser(user,id),HttpStatus.OK);
         }catch (Exception e){

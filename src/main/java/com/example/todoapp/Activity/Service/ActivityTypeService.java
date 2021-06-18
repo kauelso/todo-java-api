@@ -2,8 +2,8 @@ package com.example.todoapp.Activity.Service;
 
 import com.example.todoapp.Activity.Models.Activity;
 import com.example.todoapp.Activity.Models.ActivityType;
-import com.example.todoapp.Activity.Repository.ActivityRepository;
-import com.example.todoapp.Activity.Repository.ActivityTypeRepository;
+import com.example.todoapp.Activity.Repository.Database.ActivityRepository;
+import com.example.todoapp.Activity.Repository.Database.ActivityTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -15,12 +15,10 @@ import java.util.Optional;
 public class ActivityTypeService {
 
     private final ActivityTypeRepository repository;
-    private final ActivityRepository Actrepository;
 
     @Autowired
-    public ActivityTypeService(@Qualifier("type") ActivityTypeRepository repository,@Qualifier("activity") ActivityRepository actRepository) {
+    public ActivityTypeService(@Qualifier("type") ActivityTypeRepository repository) {
         this.repository = repository;
-        this.Actrepository = actRepository;
     }
 
     public List<ActivityType> getAllActivityTypes(){
@@ -31,17 +29,10 @@ public class ActivityTypeService {
         return repository.findById(id);
     }
 
-    public Optional<ActivityType> getActivityType(Long id){
-        return repository.findByActivityId(id);
-    }
-
     public ActivityType addNewActivityType(ActivityType activityType) throws IllegalAccessException {
-        Optional<ActivityType> result = repository.findByActivityId(activityType.getActivityId());
+        activityType.setType(activityType.getType().toUpperCase());
+        Optional<ActivityType> result = repository.findByName(activityType.getType());
         if(result.isPresent()){
-            throw new IllegalAccessException();
-        }
-        Optional<Activity> resultAct = Actrepository.findById(activityType.getActivityId());
-        if(!resultAct.isPresent()){
             throw new IllegalAccessException();
         }
         return repository.save(activityType);
@@ -63,23 +54,8 @@ public class ActivityTypeService {
 
     }
 
-    public ActivityType removeActivityTypeByActivityId(Long id) throws IllegalAccessException {
-        Optional<ActivityType> result = repository.findByActivityId(id);
-        if(!result.isPresent()){
-            throw new IllegalAccessException();
-        }
-        try {
-            repository.deleteById(result.get().getId());
-            return result.get();
-        }
-        catch (Exception e){
-            System.out.println(e.toString());
-            throw e;
-        }
-
-    }
-
     public ActivityType updateActivityType(ActivityType activityType, Long id) throws IllegalAccessException {
+        activityType.setType(activityType.getType().toUpperCase());
         Optional<ActivityType> result = repository.findById(id);
         if(!result.isPresent()){
             throw new IllegalAccessException();

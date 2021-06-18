@@ -24,18 +24,18 @@ public class ActivityController {
         try{
             return new ResponseEntity<List<Activity>>(service.getActivities(), HttpStatus.OK);
         }
-        catch (IllegalAccessError e){
+        catch (Exception e){
             System.out.println(e.toString());
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Activity> getActivity(@PathVariable Long id){
+    public ResponseEntity<Activity> getActivity(@PathVariable String id){
         try{
             return new ResponseEntity<Activity>(service.getActivity(id).get(), HttpStatus.OK);
         }
-        catch (IllegalAccessError e){
+        catch (Exception e){
             System.out.println(e.toString());
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -46,7 +46,7 @@ public class ActivityController {
         try{
             return new ResponseEntity<Activity>(service.addNewActivity(activity), HttpStatus.OK);
         }
-        catch (IllegalAccessError e){
+        catch (Exception e){
             System.out.println(e.toString());
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -54,7 +54,7 @@ public class ActivityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Activity> updateActivity(@RequestBody Activity activity,@PathVariable Long id){
+    public ResponseEntity<Activity> updateActivity(@RequestBody Activity activity,@PathVariable String id){
         try{
             return new ResponseEntity<Activity>(service.updateActivity(activity,id), HttpStatus.OK);
         }catch (Exception e){
@@ -64,7 +64,7 @@ public class ActivityController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Activity> removeActivity(@PathVariable Long id){
+    public ResponseEntity<Activity> removeActivity(@PathVariable String id){
         try{
             return new ResponseEntity<Activity>(service.removeActivity(id), HttpStatus.OK);
         }catch (Exception e){

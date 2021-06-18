@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Locale;
 
 @Entity
 @Table
@@ -13,9 +14,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Data
 public class ActivityType {
-    public enum ActType{
-        PESSOAL,PROFISSIONAL,OUTROS
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +21,5 @@ public class ActivityType {
     private Long id;
 
     @Column(name = "type")
-    @NotNull private ActType type;
-
-    @Column(name = "activity_id")
-    @NotNull private Long ActivityId;
+    @NotNull private String type;
 }

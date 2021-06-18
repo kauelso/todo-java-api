@@ -1,5 +1,6 @@
 package com.example.todoapp.Activity.Models;
 
+import com.example.todoapp.User.Models.User;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Entity
 @Table
@@ -14,10 +16,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class Activity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "title")
     @NotNull private String title;
@@ -30,4 +32,10 @@ public class Activity {
 
     @Column(name = "updateAt")
     @NotNull private LocalDateTime updatedAt;
+
+    @Column(name = "user_id")
+    @NotNull private Long userId;
+
+    @Column(name = "type")
+    @NotNull private String type;
 }

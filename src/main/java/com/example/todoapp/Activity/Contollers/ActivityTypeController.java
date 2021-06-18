@@ -31,16 +31,6 @@ public class ActivityTypeController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ActivityType> getActivityType(@PathVariable Long id){
-        try{
-            return new ResponseEntity<ActivityType>(service.getActivityType(id).get(), HttpStatus.OK);
-        }
-        catch (IllegalAccessError e){
-            System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_GATEWAY);
-        }
-    }
 
     @PostMapping
     public ResponseEntity<ActivityType> addActivityType(@RequestBody ActivityType activity){

@@ -1,4 +1,4 @@
-package com.example.todoapp.Activity.Repository;
+package com.example.todoapp.Activity.Repository.Database;
 
 import com.example.todoapp.Activity.Models.ActivityType;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,6 +11,6 @@ import java.util.Optional;
 @Qualifier("type")
 @Repository
 public interface ActivityTypeRepository extends JpaRepository<ActivityType,Long> {
-    @Query("SELECT a FROM ActivityType a WHERE a.ActivityId = ?1")
-    Optional<ActivityType> findByActivityId(Long aLong);
+    @Query("SELECT at FROM ActivityType at WHERE at.type = ?1")
+    Optional<ActivityType> findByName(String name);
 }

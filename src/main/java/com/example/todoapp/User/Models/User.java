@@ -26,6 +26,7 @@ public class User {
     @NotNull
     private String password;
 
-    @Transient
+    @Column(name = "remote")
+    @NotNull
     private boolean remoteDB;
 }
