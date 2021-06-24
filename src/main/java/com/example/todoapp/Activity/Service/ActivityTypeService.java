@@ -38,20 +38,14 @@ public class ActivityTypeService {
         return repository.save(activityType);
     }
 
-    public ActivityType removeActivityType(Long id) throws IllegalAccessException {
-        Optional<ActivityType> result = repository.findById(id);
+    public ActivityType removeActivityType(String name) throws IllegalAccessException {
+        Optional<ActivityType> result = repository.findByName(name);
         if(!result.isPresent()){
             throw new IllegalAccessException();
         }
-        try {
-            repository.deleteById(id);
-            return result.get();
-        }
-        catch (Exception e){
-            System.out.println(e.toString());
-            throw e;
-        }
-
+        ActivityType type = result.get();
+        repository.deleteById(type.getId());
+        return type;
     }
 
     public ActivityType updateActivityType(ActivityType activityType, Long id) throws IllegalAccessException {

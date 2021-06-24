@@ -24,8 +24,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUser(String id){
-        return userRepository.findById(id).get();
+    public User getUser(String id) throws Exception {
+        Optional<User> response = userRepository.findById(id);
+        if(!response.isPresent()){
+            throw new Exception("User not found");
+        }
+        return response.get();
     }
 
     public User createUser(User user) throws IllegalAccessException {

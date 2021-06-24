@@ -55,9 +55,9 @@ public class ActivityTypeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ActivityType> removeActivityType(@PathVariable Long id){
+    public ResponseEntity<ActivityType> removeActivityType(@PathVariable String name){
         try{
-            return new ResponseEntity<ActivityType>(service.removeActivityType(id), HttpStatus.OK);
+            return new ResponseEntity<ActivityType>(service.removeActivityType(name), HttpStatus.OK);
         }catch (Exception e){
             System.out.println(e.toString());
             return new ResponseEntity<>(null, HttpStatus.BAD_GATEWAY);
