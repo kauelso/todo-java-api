@@ -25,19 +25,19 @@ public class ActivityController {
             return new ResponseEntity<List<Activity>>(service.getActivities(), HttpStatus.OK);
         }
         catch (Exception e){
-            System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            System.out.println(e.toString() +" : " + e.getCause());
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Activity> getActivity(@PathVariable String id){
         try{
-            return new ResponseEntity<Activity>(service.getActivity(id).get(), HttpStatus.OK);
+            return new ResponseEntity<Activity>(service.getActivity(id), HttpStatus.OK);
         }
         catch (Exception e){
-            System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            System.out.println(e.toString() +" : " + e.getCause());
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -47,8 +47,8 @@ public class ActivityController {
             return new ResponseEntity<Activity>(service.addNewActivity(activity), HttpStatus.OK);
         }
         catch (Exception e){
-            System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            System.out.println(e.toString() +" : " + e.getCause());
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
     }
@@ -58,8 +58,8 @@ public class ActivityController {
         try{
             return new ResponseEntity<Activity>(service.updateActivity(activity,id), HttpStatus.OK);
         }catch (Exception e){
-            System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            System.out.println(e.toString() +" : " + e.getCause());
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -68,8 +68,8 @@ public class ActivityController {
         try{
             return new ResponseEntity<Activity>(service.removeActivity(id), HttpStatus.OK);
         }catch (Exception e){
-            System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            System.out.println(e.toString() +" : " + e.getCause());
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -23,11 +24,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUser(Long id){
+    public User getUser(String id){
         return userRepository.findById(id).get();
     }
 
     public User createUser(User user) throws IllegalAccessException {
+        user.setId(UUID.randomUUID().toString());
         Optional<User> response = userRepository.findByUsername(user.getUsername());
         if(response.isPresent()){
             throw new IllegalAccessException();
@@ -35,7 +37,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUser(User user, Long id) throws IllegalAccessException {
+    public User updateUser(User user, String id) throws IllegalAccessException {
         Optional<User> response = userRepository.findById(id);
         if(!response.isPresent()){
             throw new IllegalAccessException();
@@ -49,18 +51,12 @@ public class UserService {
         return userRepository.save(updatedActivity.get());
     }
 
-    public User deleteUser(Long id) throws IllegalAccessException {
+    public User deleteUser(String id) throws IllegalAccessException {
         Optional<User> response = userRepository.findById(id);
         if(!response.isPresent()){
             throw new IllegalAccessException();
         }
-        try {
             userRepository.deleteById(id);
             return response.get();
-        }
-        catch (Exception e){
-            System.out.println(e.toString());
-            throw e;
-        }
     }
 }

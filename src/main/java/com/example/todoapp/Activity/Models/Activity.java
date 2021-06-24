@@ -36,7 +36,7 @@ public class Activity {
     @NotNull private LocalDateTime updatedAt;
 
     @Column(name = "user_id")
-    @NotNull private Long userId;
+    @NotNull private String userId;
 
     @Column(name = "type")
     @NotNull private String type;

@@ -4,6 +4,11 @@ import com.example.todoapp.Activity.Models.Activity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.tomcat.jni.Local;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +29,7 @@ public class ActivityDTO {
 
     private String localOwner;
 
-    private Long userId;
+    private String userId;
 
     public void toDTO(Activity activity){
         this.id = activity.getId();
@@ -35,5 +40,16 @@ public class ActivityDTO {
         this.type = activity.getType();
         this.userId = activity.getUserId();
         this.localOwner = "kaue";
+    }
+    public Activity toActivity(){
+        Activity activity = new Activity();
+        activity.setId(this.id);
+        activity.setTitle(this.title);
+        activity.setDescription(this.description);
+        activity.setCreatedAt(LocalDateTime.parse(this.createdAt.replace("Z","")));
+        activity.setUpdatedAt(LocalDateTime.parse(this.updatedAt.replace("Z","")));
+        activity.setType(this.type);
+        activity.setUserId(this.userId);
+        return activity;
     }
 }

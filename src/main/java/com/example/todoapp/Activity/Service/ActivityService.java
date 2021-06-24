@@ -5,13 +5,17 @@ import com.example.todoapp.Activity.Models.Activity;
 import com.example.todoapp.Activity.Repository.API.ActivityApiRepository;
 import com.example.todoapp.Activity.Repository.Database.ActivityRepository;
 import com.example.todoapp.Activity.Repository.Database.ActivityTypeRepository;
+import com.example.todoapp.User.Models.User;
 import com.example.todoapp.User.Repository.UserRepository;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,7 +39,13 @@ public class ActivityService {
     }
 
     public List<Activity> getActivities() {
-        return repository.findAll();
+        List<Activity> response =  repository.findAll();
+        if(response.isEmpty()){
+            return activityApiRepository.getAllActivity().getBody();
+        }else {
+            response.addAll(Objects.requireNonNull(activityApiRepository.getAllActivity().getBody()));
+            return response;
+        }
     }
 
     public Activity addNewActivity(Activity activity) throws IllegalAccessException {
@@ -47,8 +57,11 @@ public class ActivityService {
         if(!activityTypeRepository.findByName(activity.getType()).isPresent()){
             throw new IllegalAccessException();
         }
-
-        if(userRepository.findById(activity.getUserId()).get().isRemoteDB()){
+        Optional<User> findDB = userRepository.findById(activity.getUserId());
+        if(!findDB.isPresent()){
+            throw new IllegalAccessException();
+        }
+        if(findDB.get().isRemoteDB()){
             ActivityDTO dto = new ActivityDTO();
             dto.toDTO(activity);
             return activityApiRepository.saveActivity(dto).getBody();
@@ -57,40 +70,62 @@ public class ActivityService {
         }
     }
 
-    public Optional<Activity> getActivity(String id) {
-        return repository.findById(id);
+    public Activity getActivity(String id) {
+        Optional<Activity> result = repository.findById(id);
+        if(result.isPresent()){
+            return repository.findById(id).get();
+        }
+        else{
+            return activityApiRepository.getActivity(id).getBody();
+        }
     }
 
     public Activity updateActivity(Activity activity,String id) throws IllegalAccessException {
        Optional<Activity> result = repository.findById(id);
-        if(!result.isPresent()){
+        activity.setType(activity.getType().toUpperCase());
+        if(!activityTypeRepository.findByName(activity.getType()).isPresent()){
             throw new IllegalAccessException();
         }
-        Optional<Activity> updatedActivity = result.map(actv -> {
-            if(activity.getTitle() != null)actv.setTitle(activity.getTitle());
-            if(activity.getDescription() != null)actv.setDescription(activity.getDescription());
-            if(activity.getType() != null && activityTypeRepository.findByName(activity.getType()).isPresent()){
-                activity.setType(activity.getType().toUpperCase());
-                actv.setType(activity.getDescription());
+        if(result.isPresent()) {
+            Optional<Activity> updatedActivity = result.map(actv -> {
+                if (activity.getTitle() != null) actv.setTitle(activity.getTitle());
+                if (activity.getDescription() != null) actv.setDescription(activity.getDescription());
+                if (activity.getType() != null) actv.setType(activity.getDescription());
+                actv.setUpdatedAt(LocalDateTime.now());
+                return actv;
+            });
+            return repository.save(updatedActivity.get());
+        }
+        else{
+            Activity apiResult = activityApiRepository.getActivity(id).getBody();
+            if(apiResult == null){
+                throw new IllegalAccessException();
             }
-            return actv;
-        });
-        return repository.save(updatedActivity.get());
+            apiResult.setId(id);
+            activity.setType(activity.getType().toUpperCase());
+            if (activity.getTitle() != null) apiResult.setTitle(activity.getTitle());
+            if (activity.getDescription() != null) apiResult.setDescription(activity.getDescription());
+            if (activity.getType() != null && activityTypeRepository.findByName(activity.getType()).isPresent()) {
+                apiResult.setType(activity.getType());
+            }
+            activityApiRepository.putActivity(apiResult);
+            return apiResult;
+        }
     }
 
-    public Activity removeActivity(String id) throws IllegalAccessException {
+    public Activity removeActivity(String id) throws Exception {
         Optional<Activity> result = repository.findById(id);
-        if(!result.isPresent()){
-            throw new IllegalAccessException();
-        }
-        try {
+        if(result.isPresent()) {
             repository.deleteById(id);
             return result.get();
         }
-        catch (Exception e){
-            System.out.println(e.toString());
-            throw e;
+        else{
+            ResponseEntity<Activity> activity = activityApiRepository.getActivity(id);
+            if(activity.getBody() == null){
+                throw new Exception("Id not found");
+            }
+            activityApiRepository.removeActivity(id);
+            return activity.getBody();
         }
-
     }
 }
