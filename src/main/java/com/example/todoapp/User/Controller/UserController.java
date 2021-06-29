@@ -1,9 +1,12 @@
 package com.example.todoapp.User.Controller;
+import com.example.todoapp.User.DTO.DecodedTokenDTO;
+import com.example.todoapp.User.DTO.UpdateDTO;
 import com.example.todoapp.User.Models.User;
 import com.example.todoapp.User.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,8 @@ public class UserController {
     }
     @GetMapping
     public ResponseEntity<List<User>> getUsers(){
+        DecodedTokenDTO info = (DecodedTokenDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(info.getId());
         try {
             return new ResponseEntity<List<User>>(service.getUsers(),HttpStatus.OK);
         }catch (Exception e){
@@ -46,7 +51,7 @@ public class UserController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable String id){
+    public ResponseEntity<User> updateUser(@RequestBody UpdateDTO user, @PathVariable String id){
         try{
             return new ResponseEntity<User>(service.updateUser(user,id),HttpStatus.OK);
         }catch (Exception e){
