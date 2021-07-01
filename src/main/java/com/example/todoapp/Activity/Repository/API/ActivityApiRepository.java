@@ -24,10 +24,10 @@ public class ActivityApiRepository {
         return restTemplate.getForEntity("/{id}",Activity.class,id);
     }
 
-    public ResponseEntity<List<Activity>> getAllActivity(){
+    public ResponseEntity<List<Activity>> getAllActivity(String id){
         ResponseEntity<ActivityDTO[]> response = restTemplate.getForEntity("/", ActivityDTO[].class);
         List<Activity> activityList = Arrays.stream(Objects.requireNonNull(response.getBody()))
-                .filter(act -> "kaue".equals(act.getLocalOwner()))
+                .filter(act -> "kaue".equals(act.getLocalOwner()) && id.equals(act.getUserId()))
                 .map(x -> x.toActivity())
                 .collect(Collectors.toList());
         activityList.forEach(x -> System.out.println(x.getId()));

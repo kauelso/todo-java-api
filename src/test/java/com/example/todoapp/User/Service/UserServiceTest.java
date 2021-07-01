@@ -1,5 +1,6 @@
 package com.example.todoapp.User.Service;
 
+import com.example.todoapp.User.DTO.UpdateDTO;
 import com.example.todoapp.User.Models.User;
 import com.example.todoapp.User.Repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -37,11 +38,13 @@ class UserServiceTest {
         user1 = new User("1",
                 "username",
                 "password",
+                false,
                 false);
         user2 = new User("1",
                 "username",
                 "password",
-                true);
+                true,
+                false);
     }
 
     @AfterEach
@@ -64,17 +67,17 @@ class UserServiceTest {
         assertEquals(Collections.emptyList(),service.getUsers());
     }
 
-    @Test
-    void getUser() throws Exception {
-        when(repository.findById(anyString())).thenReturn(Optional.of(user1));
-        assertEquals(user1,service.getUser(anyString()));
-    }
-
-    @Test
-    void getUserNotFound(){
-        when(repository.findById(anyString())).thenReturn(Optional.empty());
-        assertThrows(Exception.class,()->service.getUser(anyString()));
-    }
+//    @Test
+//    void getUser() throws Exception {
+//        when(repository.findById(anyString())).thenReturn(Optional.of(user1));
+//        assertEquals(user1,service.getUser(anyString()));
+//    }
+//
+//    @Test
+//    void getUserNotFound(){
+//        when(repository.findById(anyString())).thenReturn(Optional.empty());
+//        assertThrows(Exception.class,()->service.getUser(anyString()));
+//    }
 
     @Test
     void createUser() throws IllegalAccessException {
@@ -89,21 +92,22 @@ class UserServiceTest {
         assertThrows(Exception.class,()->service.createUser(user1));
     }
 
-//    @Test
-//    void updateUser() throws IllegalAccessException {
-//        when(repository.findById(anyString())).thenReturn(Optional.of(user1));
-//        User updated = user1;
-//        updated.setUsername(user2.getUsername());
-//        updated.setPassword(user2.getPassword());
-//        when(repository.save(any(User.class))).thenReturn(updated);
-//        assertEquals(updated,service.updateUser(user2));
-//    }
+    @Test
+    void updateUser() throws IllegalAccessException {
+        UpdateDTO dto = new UpdateDTO(user2.getUsername(),user2.getPassword(),user2.getId());
+        when(repository.findById(anyString())).thenReturn(Optional.of(user1));
+        User updated = user1;
+        updated.setUsername(user2.getUsername());
+        updated.setPassword(user2.getPassword());
+        when(repository.save(any(User.class))).thenReturn(updated);
+        assertEquals(updated,service.updateUser(dto, user2.getId()));
+    }
 
-//    @Test
-//    void updateUserNotExists(){
-//        when(repository.findById(anyString())).thenReturn(Optional.empty());
-//        assertThrows(IllegalAccessException.class,()->service.updateUser(user2,anyString()));
-//    }
+    @Test
+    void updateUserNotExists(){
+        when(repository.findById(anyString())).thenReturn(Optional.empty());
+        assertThrows(IllegalAccessException.class,()->service.updateUser(any(UpdateDTO.class),anyString()));
+    }
 
     @Test
     void deleteUser() throws IllegalAccessException {

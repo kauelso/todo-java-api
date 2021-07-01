@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class jwtFilter extends GenericFilterBean {
 
@@ -31,11 +33,18 @@ public class jwtFilter extends GenericFilterBean {
             String token = authorization.replace("Bearer ", "");
 
             DecodedTokenDTO jws = TokenAuthenticationService.getAuthentication(token);
+            List<SimpleGrantedAuthority> roles = null;
+            if(jws.isAdmin())
+                roles =  Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("ROLE_ADMIN"));
+            else
+                roles = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
 
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                     jws,
                     token,
-                    Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"))
+                    roles
             ));
         }
 

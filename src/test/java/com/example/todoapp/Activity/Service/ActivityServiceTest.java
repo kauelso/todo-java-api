@@ -64,11 +64,13 @@ class ActivityServiceTest {
         localUser = new User("1",
                 "username",
                 "password",
+                false,
                 false);
         remoteUser = new User("1",
                 "username",
                 "password",
-                true);
+                true,
+                false);
         activityType = new ActivityType(
                 1L,
                 "OUTROS"
@@ -83,16 +85,16 @@ class ActivityServiceTest {
     @Test
     void getActivitiesEmptyList() {
         when(repository.findAll()).thenReturn(Collections.emptyList());
-        when(apiRepository.getAllActivity()).thenReturn(new ResponseEntity<List<Activity>>(Collections.emptyList(),HttpStatus.OK));
-        assertEquals(Collections.emptyList(),service.getActivities());
+        when(apiRepository.getAllActivity(anyString())).thenReturn(new ResponseEntity<List<Activity>>(Collections.emptyList(),HttpStatus.OK));
+        assertEquals(Collections.emptyList(),service.getActivities(anyString()));
     }
     @Test
     void getActivitiesBDListAndAPIEmptyList() {
         List<Activity> list = new ArrayList<Activity>();
         list.add(activity);
-        when(repository.findAll()).thenReturn(list);
-        when(apiRepository.getAllActivity()).thenReturn(new ResponseEntity<List<Activity>>(Collections.emptyList(),HttpStatus.OK));
-        assertEquals(list,service.getActivities());
+        when(repository.findAll(anyString())).thenReturn(list);
+        when(apiRepository.getAllActivity(anyString())).thenReturn(new ResponseEntity<List<Activity>>(Collections.emptyList(),HttpStatus.OK));
+        assertEquals(list,service.getActivities(anyString()));
     }
 
     @Test
@@ -100,8 +102,8 @@ class ActivityServiceTest {
         List<Activity> list = new ArrayList<Activity>();
         list.add(activity);
         when(repository.findAll()).thenReturn(Collections.emptyList());
-        when(apiRepository.getAllActivity()).thenReturn(new ResponseEntity<List<Activity>>(list,HttpStatus.OK));
-        assertEquals(list,service.getActivities());
+        when(apiRepository.getAllActivity(anyString())).thenReturn(new ResponseEntity<List<Activity>>(list,HttpStatus.OK));
+        assertEquals(list,service.getActivities(anyString()));
     }
 
     @Test
@@ -109,8 +111,8 @@ class ActivityServiceTest {
         List<Activity> list = new ArrayList<Activity>();
         list.add(activity);
         when(repository.findAll()).thenReturn(Collections.emptyList());
-        when(apiRepository.getAllActivity()).thenReturn(new ResponseEntity<List<Activity>>(list,HttpStatus.OK));
-        assertEquals(list,service.getActivities());
+        when(apiRepository.getAllActivity(anyString())).thenReturn(new ResponseEntity<List<Activity>>(list,HttpStatus.OK));
+        assertEquals(list,service.getActivities(anyString()));
     }
 
     @Test
@@ -148,13 +150,13 @@ class ActivityServiceTest {
         when(apiRepository.getActivity("1")).thenReturn(
                 new ResponseEntity<Activity>(activity, HttpStatus.OK)
         );
-        assertEquals(activity,service.getActivity("1"));
+        assertEquals(activity,service.getActivity("1",activity.getUserId()));
     }
 
     @Test
     void returnActivityFromBD() {
         when(repository.findById("1")).thenReturn(java.util.Optional.of(activity));
-        assertEquals(activity,service.getActivity("1"));
+        assertEquals(activity,service.getActivity("1",activity.getUserId()));
     }
 
     @Test
@@ -163,7 +165,7 @@ class ActivityServiceTest {
         when(apiRepository.getActivity("1")).thenReturn(
                 new ResponseEntity<Activity>(activity, HttpStatus.OK)
         );
-        assertEquals(activity,service.getActivity("1"));
+        assertEquals(activity,service.getActivity("1",activity.getUserId()));
     }
 
     @Test
@@ -172,7 +174,7 @@ class ActivityServiceTest {
         when(apiRepository.getActivity("1")).thenReturn(
                 new ResponseEntity<>(null, HttpStatus.NOT_FOUND)
         );
-        assertNull(service.getActivity("1"));
+        assertNull(service.getActivity("1",anyString()));
     }
 
     @Test
@@ -217,18 +219,25 @@ class ActivityServiceTest {
     @Test
     void removeExistingActivityBD() throws Exception {
         when(repository.findById(anyString())).thenReturn(Optional.of(activity));
-        assertEquals(activity,service.removeActivity(activity.getId()));
+        assertEquals(activity,service.removeActivity(activity.getId(),activity.getUserId()));
     }
     @Test
     void removeNotExistingActivity() throws Exception {
         when(repository.findById(anyString())).thenReturn(Optional.empty());
         when(apiRepository.getActivity(anyString())).thenReturn(new ResponseEntity<>(null,HttpStatus.NOT_FOUND));
-        assertThrows(Exception.class,()->service.removeActivity(activity.getId()));
+        assertThrows(Exception.class,()->service.removeActivity(activity.getId(),anyString()));
     }
     @Test
     void removeExistingActivityAPI() throws Exception {
         when(repository.findById(anyString())).thenReturn(Optional.empty());
         when(apiRepository.getActivity(anyString())).thenReturn(new ResponseEntity<Activity>(activity,HttpStatus.OK));
-        assertEquals(activity,service.removeActivity(activity.getId()));
+        assertEquals(activity,service.removeActivity(activity.getId(), activity.getUserId()));
+    }
+
+    @Test
+    void removeActivityAPIWrongUser() throws Exception {
+        when(repository.findById(anyString())).thenReturn(Optional.empty());
+        when(apiRepository.getActivity(anyString())).thenReturn(new ResponseEntity<Activity>(activity,HttpStatus.OK));
+        assertThrows(Exception.class,() ->service.removeActivity(activity.getId(),anyString()));
     }
 }

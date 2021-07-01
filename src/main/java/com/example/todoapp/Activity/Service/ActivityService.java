@@ -38,12 +38,12 @@ public class ActivityService {
         this.activityApiRepository = activityApiRepository;
     }
 
-    public List<Activity> getActivities() {
-        List<Activity> response =  repository.findAll();
+    public List<Activity> getActivities(String id) {
+        List<Activity> response = repository.findAll(id);
         if(response.isEmpty()){
-            return activityApiRepository.getAllActivity().getBody();
+            return activityApiRepository.getAllActivity(id).getBody();
         }else {
-            response.addAll(Objects.requireNonNull(activityApiRepository.getAllActivity().getBody()));
+            response.addAll(Objects.requireNonNull(activityApiRepository.getAllActivity(id).getBody()));
             return response;
         }
     }
@@ -70,14 +70,18 @@ public class ActivityService {
         }
     }
 
-    public Activity getActivity(String id) {
+    public Activity getActivity(String id, String userId) {
         Optional<Activity> result = repository.findById(id);
         if(result.isPresent()){
-            return repository.findById(id).get();
+            if (result.get().getUserId().equals(userId))
+                return repository.findById(id).get();
         }
         else{
-            return activityApiRepository.getActivity(id).getBody();
+            Activity apiResponse = activityApiRepository.getActivity(id).getBody();
+            if(apiResponse != null && apiResponse.getUserId().equals(userId))
+                return apiResponse;
         }
+        return null;
     }
 
     public Activity updateActivity(Activity activity,String id) throws IllegalAccessException {
@@ -87,6 +91,10 @@ public class ActivityService {
             throw new IllegalAccessException();
         }
         if(result.isPresent()) {
+            if(!result.get().getUserId().equals(activity.getUserId()))
+            {
+                throw new IllegalAccessException();
+            }
             Optional<Activity> updatedActivity = result.map(actv -> {
                 if (activity.getTitle() != null) actv.setTitle(activity.getTitle());
                 if (activity.getDescription() != null) actv.setDescription(activity.getDescription());
@@ -98,7 +106,7 @@ public class ActivityService {
         }
         else{
             Activity apiResult = activityApiRepository.getActivity(id).getBody();
-            if(apiResult == null){
+            if(apiResult == null || !apiResult.getUserId().equals(apiResult.getUserId())){
                 throw new IllegalAccessException();
             }
             apiResult.setId(id);
@@ -113,15 +121,19 @@ public class ActivityService {
         }
     }
 
-    public Activity removeActivity(String id) throws Exception {
+    public Activity removeActivity(String id, String userId) throws Exception {
         Optional<Activity> result = repository.findById(id);
         if(result.isPresent()) {
-            repository.deleteById(id);
-            return result.get();
+            if (result.get().getUserId().equals(userId)){
+                repository.deleteById(id);
+                return result.get();
+            }else{
+                throw new IllegalAccessException();
+            }
         }
         else{
             ResponseEntity<Activity> activity = activityApiRepository.getActivity(id);
-            if(activity.getBody() == null){
+            if(activity.getBody() == null || !activity.getBody().getUserId().equals(userId)){
                 throw new Exception("Id not found");
             }
             activityApiRepository.removeActivity(id);

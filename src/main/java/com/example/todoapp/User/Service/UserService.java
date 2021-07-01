@@ -30,13 +30,13 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public User getUser(String id) throws Exception {
-        Optional<User> response = userRepository.findById(id);
-        if(!response.isPresent()){
-            throw new Exception("User not found");
-        }
-        return response.get();
-    }
+//    public User getUser(String id) throws Exception {
+//        Optional<User> response = userRepository.findById(id);
+//        if(!response.isPresent()){
+//            throw new Exception("User not found");
+//        }
+//        return response.get();
+//    }
 
     public User createUser(User user) throws IllegalAccessException {
         user.setId(UUID.randomUUID().toString());
@@ -49,7 +49,7 @@ public class UserService implements UserDetailsService {
 
     public User updateUser(UpdateDTO user, String id) throws IllegalAccessException {
         Optional<User> response = userRepository.findById(id);
-        if(!response.isPresent()){
+        if(!response.isPresent() || !response.get().getId().equals(id)){
             throw new IllegalAccessException();
         }
         Optional<User> updatedActivity = response.map(usr -> {

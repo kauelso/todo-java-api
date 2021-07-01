@@ -34,9 +34,16 @@ public class User implements UserDetails {
     @NotNull
     private boolean remoteDB;
 
+    @Column(name = "role_admin")
+    private boolean isAdmin;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+        if(this.isAdmin)
+            return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
+                    new SimpleGrantedAuthority("ROLE_ADMIN"));
+        else
+            return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

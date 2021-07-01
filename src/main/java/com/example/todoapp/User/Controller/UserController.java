@@ -21,19 +21,8 @@ public class UserController {
     public UserController(UserService service) {
         this.service = service;
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable String id){
-        try {
-            return new ResponseEntity<User>(service.getUser(id), HttpStatus.OK);
-        }catch (Exception e){
-            System.out.println(e.toString());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-    }
     @GetMapping
     public ResponseEntity<List<User>> getUsers(){
-        DecodedTokenDTO info = (DecodedTokenDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(info.getId());
         try {
             return new ResponseEntity<List<User>>(service.getUsers(),HttpStatus.OK);
         }catch (Exception e){
@@ -50,10 +39,12 @@ public class UserController {
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
         }
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@RequestBody UpdateDTO user, @PathVariable String id){
+    @PutMapping("/")
+    public ResponseEntity<User> updateUser(@RequestBody UpdateDTO user){
+        DecodedTokenDTO info = (DecodedTokenDTO) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
         try{
-            return new ResponseEntity<User>(service.updateUser(user,id),HttpStatus.OK);
+            return new ResponseEntity<User>(service.updateUser(user,info.getId()),HttpStatus.OK);
         }catch (Exception e){
             System.out.println(e.toString());
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);

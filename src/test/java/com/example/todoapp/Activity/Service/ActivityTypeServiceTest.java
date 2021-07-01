@@ -89,14 +89,14 @@ class ActivityTypeServiceTest {
 
     @Test
     void removeActivityType() throws IllegalAccessException {
-        when(repository.findByName(anyString())).thenReturn(Optional.of(type1));
-        assertEquals(type1,service.removeActivityType(anyString()));
+        when(repository.findById(anyLong())).thenReturn(Optional.of(type1));
+        assertEquals(type1,service.removeActivityType(anyLong()));
     }
 
     @Test
     void removeActivityTypeAlreadyExists(){
         when(repository.findByName(anyString())).thenReturn(Optional.empty());
-        assertThrows(IllegalAccessException.class,() ->service.removeActivityType(anyString()));
+        assertThrows(IllegalAccessException.class,() ->service.removeActivityType(anyLong()));
     }
 
     @Test

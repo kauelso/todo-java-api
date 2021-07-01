@@ -38,8 +38,8 @@ public class ActivityTypeService {
         return repository.save(activityType);
     }
 
-    public ActivityType removeActivityType(String name) throws IllegalAccessException {
-        Optional<ActivityType> result = repository.findByName(name);
+    public ActivityType removeActivityType(Long name) throws IllegalAccessException {
+        Optional<ActivityType> result = repository.findById(name);
         if(!result.isPresent()){
             throw new IllegalAccessException();
         }

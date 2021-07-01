@@ -3,6 +3,7 @@ package com.example.todoapp.Secutiry;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import io.jsonwebtoken.Jwts;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class TokenAuthenticationService {
 
@@ -27,6 +29,7 @@ public class TokenAuthenticationService {
                 .claim("username",user.getUsername())
                 .claim("id",user.getId())
                 .claim("isRemote",user.isRemoteDB())
+                .claim("roles",user.isAdmin())
                 .signWith(Keys.hmacShaKeyFor(SECRET))
                 .compact();
 
@@ -44,6 +47,7 @@ public class TokenAuthenticationService {
             user.setId(claims.get("id",String.class));
             user.setUsername(claims.get("username",String.class));
             user.setRemote(claims.get("isRemote",Boolean.class));
+            user.setAdmin(claims.get("roles", Boolean.class));
             return user;
         }
         return null;
